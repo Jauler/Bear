@@ -318,7 +318,7 @@ def intercept_build():
     # an existing compilation database from a previous run.
     if args.append and os.path.isfile(args.cdb):
         previous = CompilationDatabase.load(args.cdb, tools)
-        entries = iter(set(itertools.chain(previous, current)))
+        entries = iter(set(itertools.chain(current, previous)))
         CompilationDatabase.save(entries, args.cdb, args.field_output)
     else:
         CompilationDatabase.save(current, args.cdb, args.field_output)
@@ -607,11 +607,11 @@ class Compilation:
 
     def __hash__(self):
         # type: (Compilation) -> int
-        return hash(str(self.as_dict()))
+        return hash(str(self.directory + self.source))
 
     def __eq__(self, other):
         # type: (Compilation, object) -> bool
-        return vars(self) == vars(other)
+        return self.directory == other.directory and self.source == other.source 
 
     def as_dict(self):
         # type: (Compilation) -> Dict[str, str]
